@@ -1,0 +1,6 @@
+FROM cgr.dev/chainguard-private/python-fips:latest-dev
+
+WORKDIR /app
+COPY app.py .
+
+ENTRYPOINT ["python", "app.py"]

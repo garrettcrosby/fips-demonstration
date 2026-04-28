@@ -1,0 +1,14 @@
+FROM cgr.dev/chainguard-private/python-fips:latest-dev
+
+USER root
+# Corrupt the stored module-mac in fipsmodule.cnf.
+# At startup, the FIPS provider computes HMAC-SHA256 over its own in-memory image and
+# compares it to this value. A mismatch causes the provider to refuse initialization,
+# making all cryptographic operations unavailable.
+RUN sed -i 's/^module-mac = .*/module-mac = 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00/' \ 
+    /etc/ssl/fipsmodule.cnf
+
+WORKDIR /app
+COPY app.py .
+
+ENTRYPOINT ["python", "app.py"]
